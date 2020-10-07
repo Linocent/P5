@@ -1,81 +1,73 @@
-import requests as rq
 from Show import Menu
-
-Menu.show()
-
-
-
-def test():
-    r = rq.get('https://fr.openfoodfacts.org/categories.json')
-    if r.status_code == rq.codes.ok:
-        print(r.json())
-    # categorie = rq.loads(r.text)
-    # print(categorie.keys())
+from API import DataBase
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
-def oeuf():
-    oeuf = rq.get('https://fr.openfoodfacts.org/categorie/oeufs.json')
-    if oeuf.status_code == rq.codes.ok:
-        # print(r.json())
-        dict = oeuf.json()
-        for prod in dict.get('products'):
-            prod_name = prod.get('product_name_fr')
-            prod_url = prod.get('url')
-            prod_nutri = prod.get('nutrition_grades')
-            prod_stores = prod.get('stores')
-            # print(prod_name)
-            # print(prod_nutri)
-            # print(prod_url)
-            # print(prod_stores)
-            prod_list = {}
-            oeuf_list = [prod_name, prod_nutri, prod_url, prod_stores]
-            print(oeuf_list)
+db = DataBase()
+menu = Menu()
 
 
-def citronade():
-    citron = rq.get('https://fr.openfoodfacts.org/categorie/citronnades.json')
-    if citron.status_code == rq.codes.ok:
-        # print(r.json())
-        dict = citron.json()
-        for prod in dict.get('products'):
-            prod_name = prod.get('product_name_fr')
-            prod_url = prod.get('url')
-            prod_nutri = prod.get('nutrition_grades')
-            prod_stores = prod.get('stores')
-            # print(prod_name)
-            # print(prod_nutri)
-            # print(prod_url)
-            # print(prod_stores)
-            prod_list = {}
-            citron_list = [prod_name, prod_nutri, prod_url, prod_stores]
-            print(citron_list)
+class Main:
+
+    def __init__(self):
+        self.engine = create_engine('mysql+pymysql://Timothee:RedBull/75019@localhost/openfoodfact')
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+        self.conn = self.engine.connect()
+
+    def main(self):
+
+        compt = 1
+        dict_cat = {
+            '1': "charcuteries",
+            '2': "citronnades",
+            '3': "boissons-gazeuses",
+            '4': "purees-de-pommes-de-terre",
+            '5': "chips-de-pommes-de-terre",
+            '6': "fromages-de-france",
+            '7': "yaourts-aux-fruits",
+            '8': "pates-a-tartiner",
+            '9': "biscuits-sables",
+            '10': "pizzas",
+            '11': "hamburgers"
+        }
+
+        db.fill_cat(dict_cat)
+        db.fill_product(dict_cat)
+
+        while compt != 0:
+            choice = input("Sélection de l'action:\n"
+                           "1: Choix d'une catégorie\n"
+                           "2: Voir les substitues\n"
+                           "3: Effacer données\n"
+                           "0: fermeture\n")
+            if choice == '1':
+                select = input("liste des catégories:\n"
+                               '1: Charcuteries\n'
+                               '2: Citronade\n'
+                               '3: Boissons gazeuses\n'
+                               '4: Purée PDT\n'
+                               '5: Chips\n'
+                               '6: Fromages\n'
+                               '7: Yaourt\n'
+                               '8: Pâte à tartiner\n'
+                               '9: Biscuits sablés\n'
+                               '10: Pizzas\n'
+                               '11: Hamburger\n')
+                menu.selection(select)
+                menu.sub(select)
+                compt = 0
+
+            if choice == '2':
+                menu.show_substitue()
+            if choice == '0':
+                print('Au revoir.')
+                compt = 0
+            if choice == '3':
+                db.purge_db()
+                compt = 0
 
 
-def oeuf2():  # Inutilisé
-    cat_list = ['https://fr.openfoodfacts.org/categorie/oeufs.json',
-                'https://fr.openfoodfacts.org/categorie/citronnades.json',
-                'https://fr.openfoodfacts.org/categorie/boissons-gazeuses.json',
-                'https://fr.openfoodfacts.org/categorie/purees-de-pommes-de-terre.json',
-                'https://fr.openfoodfacts.org/categorie/chips-de-pommes-de-terre.json',
-                'https://fr.openfoodfacts.org/categorie/fromages-de-france.json',
-                'https://fr.openfoodfacts.org/categorie/yaourts-aux-fruits.json',
-                'https://fr.openfoodfacts.org/categorie/pates-a-tartiner.json',
-                'https://fr.openfoodfacts.org/categorie/biscuits-sables.json',
-                'https://fr.openfoodfacts.org/categorie/pizzas.json',
-                'https://fr.openfoodfacts.org/categorie/hamburgers.json'
-                ]
-    for k in range(len(cat_list) - 1):
-        r = rq.get(cat_list[k])
-        dict = r.json()
-        for prod in dict.get('products'):
-            prod_name = prod.get('product_name_fr')
-            prod_url = prod.get('url')
-            prod_nutri = prod.get('nutrition_grades')
-            prod_stores = prod.get('stores')
-            # print(prod_name)
-            # print(prod_nutri)
-            # print(prod_url)
-            # print(prod_stores)
-            prod_list = {}
-            prod_list = [prod_name, prod_nutri, prod_url, prod_stores]
-            print(prod_list)
+Main = Main()
+Main.main()

@@ -1,10 +1,10 @@
-from API import SelectProduct, FillDB
+from API import SelectProduct, DataBase
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from BDD import Categorie, Store, Products
+from BDD import Products, Substitue
 
 select_product = SelectProduct()
-filldb = FillDB()
+db = DataBase()
 
 
 class Menu:
@@ -13,65 +13,56 @@ class Menu:
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.conn = self.engine.connect()
+        self.id = dict()
+        self.d = list()
+        self.verif = 0
 
-    def show(self):
+    def selection(self, cat):
 
-        compt = 1
-        Dict_cat = {
-            '1': "charcuteries",
-            '2': "citronnades",
-            '3': "boissons-gazeuses",
-            '4': "purees-de-pommes-de-terre",
-            '5': "chips-de-pommes-de-terre",
-            '6': "fromages-de-france",
-            '7': "yaourts-aux-fruits",
-            '8': "pates-a-tartiner",
-            '9': "biscuits-sables",
-            '10': "pizzas",
-            '11': "hamburgers"
-        }
+        result = self.session.query(Products).filter_by(categorie_id=cat).all()
+        id = self.session.query(Products.id).filter_by(categorie_id=cat).all()
 
-        filldb.fill_cat(Dict_cat)
-        filldb.fill_product(Dict_cat, select_product)
+        for ID in id:
+            ID = str(ID).replace(',', '').replace('(', '').replace(')', '')
+            self.d.append(ID)
 
-        while compt == 1:
-            choice = input("Sélection de l'action:\n"
-                           "1: Choix d'une catégorie\n"
-                           "2: Voir les substitues\n"
-                           "3: Effacer données (en cours de dev)\n"
-                           "0: fermeture\n")
-            if choice == '1':
-                choice = input("liste des catégories:\n"
-                                '1: Charcuteries\n'
-                                '2: Citronade\n'
-                                '3: Boissons gazeuses\n'
-                                '4: Purée PDT\n'
-                                '5: Chips\n'
-                                '6: Fromages\n'
-                                '7: Yaourt\n'
-                                '8: Pâte à tartiner\n'
-                                '9: Biscuits sablés\n'
-                                '10: Pizzas\n'
-                                '11: Hamburger\n'
-                                )
-                select_product.extract(choice, Dict_cat[choice])
+        for prod in result:
+            print(prod)
 
-                """result = self.session.query(Products).from_statement(
-                    f"SELECT products_name FROM products WHERE categorie_id={choice}")
-                print("This is result: ", result)
-                for row in result:
-                    print("Product: ", row['products'])"""
-
-            if choice == '2':
+        while self.verif == 0:
+            prod = input("Enter the number of product:\n")
+            if prod in self.d:
+                product = self.session.query(Products).get(f"{prod}")
+                self.id.update({"p_id": prod})
+                print(f"{product} ")
+                self.verif = 1
+            else:
                 pass
-            if choice == '0':
-                print('Au revoir.')
-                compt = 0
-            if choice == '3':
-                with self.engine.connect() as connection:
-                    connection.execute("DROP TABLE Substitue",
-                                       "DROP TABLE products",
-                                       "DROP TABLE categorie")
 
+    def sub(self, cat):
+        select = input(f"Do you want to have substitue?\n"
+                       f"o: Oui\n"
+                       f"n : Non\n")
+        if select == "o":
+            substitue = self.session.query(Products).filter_by(categorie_id=cat).order_by(Products.name_nut).first()
+            print(substitue)
+            save = input(f"Do you want to save the substitue?\n"
+                         f"o: Oui\n"
+                         f"n : Non\n")
+            id_sub = self.session.query(Products.id).filter_by(categorie_id=cat).order_by(Products.name_nut).first()
+            id_sub2 = str(id_sub).replace(',', '').replace('(', '').replace(')', '')
+            self.id.update({"id_sub": id_sub2})
+            if save == "o":
+                db.fill_sub(self.id['id_sub'], self.id['p_id'])
+            else:
+                pass
+        else:
+            pass
 
-Menu = Menu()
+    def show_substitue(self):
+        products = self.session.query(Products).join(Substitue, Substitue.products_ID == Products.id)
+        substitue = self.session.query(Products).join(Substitue, Substitue.substitue_ID == Products.id)
+        for prod in products:
+            print(prod)
+            for sub in substitue:
+                print(f"The substitue: {sub}")
