@@ -1,4 +1,5 @@
-"""This file extract data from OpenFoodFact, fill the DataBase and empty the Database. """
+"""This file extract data from OpenFoodFact, fill the
+DataBase and empty the Database. """
 import requests as rq
 from BDD import Categorie, Store, Products, Substitue
 from sqlalchemy import create_engine
@@ -18,8 +19,8 @@ class SelectProduct:
 
     def extract(self, dict_cat_key, dict_cat_value):
         """Extract data from OpenFoodFact."""
-
-        product = rq.get('https://fr.openfoodfacts.org/categorie/'+dict_cat_value+'/1.json')
+        product = rq.get('https://fr.openfoodfacts.org/categorie/'
+                         +dict_cat_value+'/1.json')
         prod_key = dict_cat_key
         if product.status_code == rq.codes.ok:
             dict = product.json()
@@ -28,14 +29,16 @@ class SelectProduct:
                 self.prod_url = prod.get('url')
                 self.prod_nutri = prod.get('nutrition_grades')
                 self.prod_stores = prod.get('stores', 'nothing')
-                self.product_list.append([self.prod_name, self.prod_nutri, self.prod_url,
-                                          self.prod_stores, prod_key])
+                self.product_list.append([self.prod_name, self.prod_nutri,
+                                          self.prod_url, self.prod_stores,
+                                          prod_key])
                 print(self.product_list)
         else:
             print("Can't connect.")
 
     def split_store(self, list_store):
-        """Split a list of some store. Unused here, but I want to use it later."""
+        """Split a list of some store. Unused here,
+        but I want to use it later."""
         store = list_store
         if "," in list_store:
             store = list_store.split(",")
@@ -48,7 +51,8 @@ class DataBase:
     """Manage the DataBase (fill and empty it)."""
 
     def __init__(self):
-        self.engine = create_engine('mysql+pymysql://Timothee:RedBull/75019@localhost/openfoodfact')
+        self.engine = create_engine('mysql+pymysql://Timothee:RedBull/'
+                                    '75019@localhost/openfoodfact')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.conn = self.engine.connect()

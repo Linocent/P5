@@ -7,7 +7,8 @@ from sqlalchemy.dialects.mysql import TINYINT, TINYTEXT
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-engine = create_engine('mysql+pymysql://Timothee:RedBull/75019@localhost/openfoodfact')
+engine = create_engine('mysql+pymysql://Timothee:RedBull'
+                       '/75019@localhost/openfoodfact')
 
 
 class Substitue(Base):
@@ -49,7 +50,7 @@ class Products(Base):
     store = relationship("Store", back_populates="products")
 
     def __repr__(self):
-        return f"Products: {self.id,self.name, self.name_nut, self.name_url, self.store_name}"
+        return f"Products: {self.id, self.name, self.name_nut, self.name_url, self.store_name}"
 
 
 class Store(Base):

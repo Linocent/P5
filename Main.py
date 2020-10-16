@@ -1,7 +1,8 @@
 # !/usr/bin/python3
 # -*- coding: Utf-8 -*-
 
-"""Select a categorie and a product to find a substitute, save them and consult them.
+"""Select a categorie and a product to find a substitute,
+save them and consult them.
 
 Script python
 files: BDD.py, API.py, Show.py, requirements.txt, Main.py."""
@@ -18,7 +19,8 @@ class Main:
     """It's the structure of the project. It's the menu."""
 
     def __init__(self):
-        self.engine = create_engine('mysql+pymysql://Timothee:RedBull/75019@localhost/openfoodfact')
+        self.engine = create_engine('mysql+pymysql://Timothee:RedBull/'
+                                    '75019@localhost/openfoodfact')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.conn = self.engine.connect()
@@ -45,7 +47,7 @@ class Main:
         db.fill_product(dict_cat)
 
         while compt != 0:
-            choice = input("Sélection de l'action:\n"
+            choice = input("Choose an action:\n"
                            "1: Choix d'une catégorie\n"
                            "2: Voir les substitues\n"
                            "3: Effacer données\n"
