@@ -1,20 +1,28 @@
+# !/usr/bin/python3
+# -*- coding: Utf-8 -*-
+
+"""Select a categorie and a product to find a substitute, save them and consult them.
+
+Script python
+files: BDD.py, API.py, Show.py, requirements.txt, Main.py."""
 from Show import Menu
 from API import DataBase
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 
 db = DataBase()
 menu = Menu()
 
 
 class Main:
+    """It's the structure of the project. It's the menu."""
 
     def __init__(self):
         self.engine = create_engine('mysql+pymysql://Timothee:RedBull/75019@localhost/openfoodfact')
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.conn = self.engine.connect()
+        self.verif = 0
 
     def main(self):
 
@@ -43,7 +51,7 @@ class Main:
                            "3: Effacer données\n"
                            "0: fermeture\n")
             if choice == '1':
-                select = input("liste des catégories:\n"
+                select = input("Select the categorie:\n"
                                '1: Charcuteries\n'
                                '2: Citronade\n'
                                '3: Boissons gazeuses\n'
@@ -58,16 +66,16 @@ class Main:
                 menu.selection(select)
                 menu.sub(select)
                 compt = 0
-
             if choice == '2':
                 menu.show_substitue()
+                compt = 0
             if choice == '0':
                 print('Au revoir.')
                 compt = 0
             if choice == '3':
-                db.purge_db()
-                compt = 0
+                db.empty_db()
 
 
 Main = Main()
-Main.main()
+if __name__ == "__main__":
+    Main.main()

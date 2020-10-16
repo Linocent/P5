@@ -1,3 +1,5 @@
+"""This files creates the table Substitute, Categorie, Products and Store."""
+
 from sqlalchemy import create_engine, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import SmallInteger, VARCHAR, CHAR
@@ -29,7 +31,7 @@ class Categorie(Base):
         'Products', back_populates='categorie')
 
     def __repr__(self):
-        return f"Categorie: {self.name}"
+        return f"Categorie: {self.id, self.name}"
 
 
 class Products(Base):
