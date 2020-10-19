@@ -20,7 +20,7 @@ class SelectProduct:
     def extract(self, dict_cat_key, dict_cat_value):
         """Extract data from OpenFoodFact."""
         product = rq.get('https://fr.openfoodfacts.org/categorie/'
-                         +dict_cat_value+'/1.json')
+                         + dict_cat_value+'/1.json')
         prod_key = dict_cat_key
         if product.status_code == rq.codes.ok:
             dict = product.json()
