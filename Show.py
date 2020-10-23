@@ -1,11 +1,10 @@
 """File which show and manage the query from the menu in Main.py"""
-from API import SelectProduct, DataBase
+from api import SelectProduct
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from BDD import Products, Substitue
+from model import Products, Substitue
 
 select_product = SelectProduct()
-db = DataBase()
 
 
 class Menu:

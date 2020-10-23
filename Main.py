@@ -5,9 +5,9 @@
 save them and consult them.
 
 Script python
-files: BDD.py, API.py, Show.py, requirements.txt, Main.py."""
-from Show import Menu
-from API import DataBase
+files: database.py, api.py, show.py, main.py."""
+from show import Menu
+from database import DataBase
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -48,10 +48,10 @@ class Main:
 
         while compt != 0:
             choice = input("Choose an action:\n"
-                           "1: Choix d'une catégorie\n"
-                           "2: Voir les substitues\n"
-                           "3: Effacer données\n"
-                           "0: fermeture\n")
+                           "1: Choose a categorie\n"
+                           "2: See substitutes\n"
+                           "3: Empty data\n"
+                           "0: Close\n")
             if choice == '1':
                 select = input("Select the categorie:\n"
                                '1: Charcuteries\n'
@@ -72,7 +72,7 @@ class Main:
                 menu.show_substitue()
                 compt = 0
             if choice == '0':
-                print('Au revoir.')
+                print('Goodbye.')
                 compt = 0
             if choice == '3':
                 db.empty_db()
